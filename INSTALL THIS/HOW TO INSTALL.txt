@@ -1,0 +1,2 @@
+selenium and webdriver = https://www.geeksforgeeks.org/how-to-install-selenium-in-python/
+BeautifulSOup = https://www.geeksforgeeks.org/beautifulsoup-installation-python/

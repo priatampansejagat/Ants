@@ -1,4 +1,5 @@
-from controller.Test import *
+from controller.Browse import *
+from controller.Parser import *
 
 class Router:
 
@@ -6,7 +7,8 @@ class Router:
 
     def initiate_router(self):
         # initiate ruter
-        self._controller['test']=test
+        self._controller['Browse']=Browse()
+        self._controller['Parser']=Parser()
         pass
 
     def get_route(self):

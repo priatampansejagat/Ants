@@ -5,10 +5,15 @@ class Home():
 
     # receive controllers
     controllers={}
-
+    Browse = None
+    page_content = None
+    Parser = None
+    extraction_result = None
 
     def __init__(self, controllers):
-        controllers = controllers
+        self.controllers = controllers
+        self.Browse = self.controllers['Browse']
+        self.Parser = self.controllers['Parser']
 
         # Undefined UI
         global button_remove_rule
@@ -59,10 +64,13 @@ class Home():
         label_extract_title = tk.Label(frame_extract, text='EXTRACTION LAB', pady=15)
         label_extract_title.grid(row=0, column=0)
 
-        text_grab = tk.Entry(frame_extract, width=40)
-        text_grab.grid(row=1, column=0)
+        global text_grab
+        # self.text_grab = tk.Entry(frame_extract, width=40)
+        self.text_grab = EntryWithPlaceholder(frame_extract, placeholder="element=attr1:val1, attr2:val2, etc...")
+        self.text_grab.grid(row=1, column=0,ipadx=50)
 
-        button_add_rule = tk.Button(frame_extract, text='Add Rule', command=lambda:self.add_rules(str(text_grab.get())))
+
+        button_add_rule = tk.Button(frame_extract, text='Add Rule', command=lambda:self.add_rules(str(self.text_grab.get())))
         button_add_rule.grid(row=1, column=1)
 
         frame_extract_options = tk.Canvas(frame_extract)
@@ -109,7 +117,23 @@ class Home():
     # Initiate function
     def data_dump(self,value='no url'):
         if len(value.strip(' ')) > 0:
-            print(value)
+            self.text_dump.delete('1.0', tk.END)
+
+            print('execute: Dump')
+            # print('url = '+ str(value))
+
+            if self.Browse.get_url() == None or self.Browse.get_url() != value:
+                self.Browse.set_url(value)
+                self.Browse.start()
+
+                self.page_content = self.Browse.get_page_content()
+                self.Parser.set_page_content(self.page_content)
+                self.text_dump.insert(tk.END, self.page_content)
+            else:
+                self.page_content = self.Browse.get_page_content()
+                self.Parser.set_page_content(self.page_content)
+                self.text_dump.insert(tk.END, self.page_content)
+
         else:
             print('no url')
 
@@ -124,6 +148,8 @@ class Home():
 
             self.rule_items_nest.update()
             self.canvas_extract_options['scrollregion'] = "0 0 0 %s" % self.rule_items_nest.winfo_height()
+
+            self.text_grab.delete(0,tk.END)
         else:
             print('no url')
 
@@ -160,13 +186,40 @@ class Home():
         self.canvas_extract_options['scrollregion'] = "0 0 0 %s" % self.rule_items_nest.winfo_height()
 
     def extraction(self):
-        # for key in self.list_rule:
-        #     print(key)
         if len(self.list_rule)>0:
-            print('hiolalala')
+            self.extraction_result = self.Parser.scrape(self.list_rule)
         else:
             print('Please add rules')
 
 
+
+
+
+
+class EntryWithPlaceholder(tk.Entry):
+    def __init__(self, master=None, placeholder="PLACEHOLDER", color='grey'):
+        super().__init__(master)
+
+        self.placeholder = placeholder
+        self.placeholder_color = color
+        self.default_fg_color = self['fg']
+
+        self.bind("<FocusIn>", self.foc_in)
+        self.bind("<FocusOut>", self.foc_out)
+
+        self.put_placeholder()
+
+    def put_placeholder(self):
+        self.insert(0, self.placeholder)
+        self['fg'] = self.placeholder_color
+
+    def foc_in(self, *args):
+        if self['fg'] == self.placeholder_color:
+            self.delete('0', 'end')
+            self['fg'] = self.default_fg_color
+
+    def foc_out(self, *args):
+        if not self.get():
+            self.put_placeholder()
 
 

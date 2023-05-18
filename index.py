@@ -1,11 +1,14 @@
 from router import *
 from view.Home import *
+import constant as cons
 
-class Index (Router):
 
+class Index:
+
+    router = Router()
     def __init__(self):
-        self.initiate_router()
-        home = Home(self.get_route())
+        self.router.initiate_router()
+        home = Home(self.router.get_route())
         pass
 
 
@@ -13,6 +16,9 @@ class Index (Router):
 
 
 run = Index()
+
+
+
 # how to use router
 """
 tesss= Index()
