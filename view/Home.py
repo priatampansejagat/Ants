@@ -26,7 +26,7 @@ class Home():
         # CREATE UI
         main_window = tk.Tk(screenName='main_screen', baseName='main_basename', className='Ants', useTk=1)
         main_window.title('Ants')
-        main_window.geometry('{}x{}'.format(1300,720))
+        main_window.geometry('{}x{}'.format(1300,750))
 
         container = tk.Frame(main_window, height=720, width=1300)
         container.pack(side="top", fill="both", expand=True)
@@ -39,26 +39,35 @@ class Home():
         # label_url.pack(side='left',fill='both')
         label_url.grid(row=0, column=0)
 
+        # label_search = tk.Label(frame_input, text='SEARCH')
+        # label_search.grid(row=1, column=0)
+
         input_url = tk.Entry(frame_input, width=100)
-        input_url.grid(row=0, column=1, pady=20, padx=10)
+        input_url.grid(row=0, column=1, pady=10, padx=10)
+
+        # input_search = tk.Entry(frame_input, width=100)
+        # input_search.grid(row=1, column=1, pady=10, padx=10)
 
         button = tk.Button(frame_input, text='Dump', width=25, command=lambda:self.data_dump(str(input_url.get())))
         button.grid(row=0, column=2)
 
+        # button_seach = tk.Button(frame_input, text='Seach', width=25, command=lambda: self.data_dump(str(input_url.get())))
+        # button_seach.grid(row=1, column=2)
+
         global text_dump
         self.text_dump = tk.Text(frame_input, height=38, width=110, wrap=tk.NONE)
-        self.text_dump.grid(row=1,column=0,columnspan=3)
+        self.text_dump.grid(row=2,column=0,columnspan=3)
 
         text_dump_scrollbar_y = tk.Scrollbar(frame_input, command=self.text_dump.yview)
-        text_dump_scrollbar_y.grid(row=1, column=3, sticky='nsew')
+        text_dump_scrollbar_y.grid(row=2, column=3, sticky='nsew')
         self.text_dump['yscrollcommand'] = text_dump_scrollbar_y.set
 
         text_dump_scrollbar_x = tk.Scrollbar(frame_input, command=self.text_dump.xview, orient='horizontal')
-        text_dump_scrollbar_x.grid(row=2, column=0,columnspan=3, sticky='nsew')
+        text_dump_scrollbar_x.grid(row=3, column=0,columnspan=3, sticky='nsew')
         self.text_dump['xscrollcommand'] = text_dump_scrollbar_x.set
 
         frame_extract = tk.Frame(frame_input, padx=30, pady=15, highlightbackground="grey", highlightthickness=1)
-        frame_extract.grid(row=0, column=5, rowspan=2)
+        frame_extract.grid(row=0, column=5, rowspan=3)
         # frame_extract.config(bg="skyblue")
 
         label_extract_title = tk.Label(frame_extract, text='EXTRACTION LAB', pady=15)
@@ -128,14 +137,22 @@ class Home():
 
                 self.page_content = self.Browse.get_page_content()
                 self.Parser.set_page_content(self.page_content)
-                self.text_dump.insert(tk.END, self.page_content)
+
+                self.dump_show(self.page_content)
+                # self.text_dump.insert(tk.END, self.page_content)
             else:
                 self.page_content = self.Browse.get_page_content()
                 self.Parser.set_page_content(self.page_content)
-                self.text_dump.insert(tk.END, self.page_content)
+
+                self.dump_show(self.page_content)
+                # self.text_dump.insert(tk.END, self.page_content)
 
         else:
             print('no url')
+
+    def dump_show(self,value=''):
+        self.text_dump.delete('1.0', tk.END)
+        self.text_dump.insert(tk.END, value)
 
     def add_rules(self,value='no rules'):
         if len(value.strip(' ')) > 0:
@@ -185,9 +202,11 @@ class Home():
         self.rule_items_nest.update()
         self.canvas_extract_options['scrollregion'] = "0 0 0 %s" % self.rule_items_nest.winfo_height()
 
+
     def extraction(self):
         if len(self.list_rule)>0:
             self.extraction_result = self.Parser.scrape(self.list_rule)
+            self.dump_show(self.extraction_result[len(self.extraction_result)-1])
         else:
             print('Please add rules')
 
