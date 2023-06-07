@@ -5,13 +5,16 @@ class Home():
 
     # receive controllers
     controllers={}
+    constants = {}
     Browse = None
     page_content = None
     Parser = None
     extraction_result = None
 
-    def __init__(self, controllers):
+    def __init__(self, controllers, constants = None):
         self.controllers = controllers
+        self.constants = constants
+
         self.Browse = self.controllers['Browse']
         self.Parser = self.controllers['Parser']
 
@@ -26,9 +29,9 @@ class Home():
         # CREATE UI
         main_window = tk.Tk(screenName='main_screen', baseName='main_basename', className='Ants', useTk=1)
         main_window.title('Ants')
-        main_window.geometry('{}x{}'.format(1300,750))
+        main_window.geometry('{}x{}'.format(int(self.constants['monitor_width']),int(self.constants['monitor_height'])))
 
-        container = tk.Frame(main_window, height=720, width=1300)
+        container = tk.Frame(main_window, height=self.constants['monitor_height'], width=self.constants['monitor_width'])
         container.pack(side="top", fill="both", expand=True)
         # container.config(bg="skyblue")
 
@@ -42,20 +45,20 @@ class Home():
         # label_search = tk.Label(frame_input, text='SEARCH')
         # label_search.grid(row=1, column=0)
 
-        input_url = tk.Entry(frame_input, width=100)
+        input_url = tk.Entry(frame_input, width=int(self.constants['monitor_width'] * 8 / 100))
         input_url.grid(row=0, column=1, pady=10, padx=10)
 
         # input_search = tk.Entry(frame_input, width=100)
         # input_search.grid(row=1, column=1, pady=10, padx=10)
 
-        button = tk.Button(frame_input, text='Dump', width=25, command=lambda:self.data_dump(str(input_url.get())))
+        button = tk.Button(frame_input, text='Dump', width=int(self.constants['monitor_width'] * 1.5/100), command=lambda:self.data_dump(str(input_url.get())))
         button.grid(row=0, column=2)
 
         # button_seach = tk.Button(frame_input, text='Seach', width=25, command=lambda: self.data_dump(str(input_url.get())))
         # button_seach.grid(row=1, column=2)
 
         global text_dump
-        self.text_dump = tk.Text(frame_input, height=38, width=110, wrap=tk.NONE)
+        self.text_dump = tk.Text(frame_input, height=int(self.constants['monitor_height'] * 5/100), width=int(self.constants['monitor_width'] * 8/100), wrap=tk.NONE)
         self.text_dump.grid(row=2,column=0,columnspan=3)
 
         text_dump_scrollbar_y = tk.Scrollbar(frame_input, command=self.text_dump.yview)
@@ -86,7 +89,7 @@ class Home():
         frame_extract_options.grid(row=2, column=0, pady=10,columnspan=2)
 
         global canvas_extract_options
-        self.canvas_extract_options = tk.Canvas(frame_extract_options, width=280, height=480, background='white')
+        self.canvas_extract_options = tk.Canvas(frame_extract_options, width=int(self.constants['monitor_width'] * 20/100), height=int(self.constants['monitor_height'] * 70/100), background='white')
         self.canvas_extract_options.grid(row=0, column=0)
 
         global rule_items_nest
